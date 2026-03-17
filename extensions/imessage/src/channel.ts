@@ -3,7 +3,7 @@ import {
   buildAccountScopedDmSecurityPolicy,
   collectAllowlistProviderRestrictSendersWarnings,
 } from "openclaw/plugin-sdk/channel-config-helpers";
-import { buildAgentSessionKey, type RoutePeer } from "openclaw/plugin-sdk/core";
+import { resolveOutboundSendDep } from "openclaw/plugin-sdk/channel-runtime";
 import {
   collectStatusIssuesFromLastError,
   DEFAULT_ACCOUNT_ID,
@@ -14,6 +14,7 @@ import {
   resolveIMessageGroupToolPolicy,
   type ChannelPlugin,
 } from "openclaw/plugin-sdk/imessage";
+import { buildAgentSessionKey, type RoutePeer } from "openclaw/plugin-sdk/routing";
 import { buildPassiveProbedChannelStatusSummary } from "../../shared/channel-status-summary.js";
 import { resolveIMessageAccount, type ResolvedIMessageAccount } from "./accounts.js";
 import { getIMessageRuntime } from "./runtime.js";
@@ -178,7 +179,9 @@ export const imessagePlugin: ChannelPlugin<ResolvedIMessageAccount> = {
     chunkerMode: "text",
     textChunkLimit: 4000,
     sendText: async ({ cfg, to, text, accountId, deps, replyToId }) => {
-      const result = await (await loadIMessageChannelRuntime()).sendIMessageOutbound({
+      const result = await (
+        await loadIMessageChannelRuntime()
+      ).sendIMessageOutbound({
         cfg,
         to,
         text,
@@ -189,7 +192,9 @@ export const imessagePlugin: ChannelPlugin<ResolvedIMessageAccount> = {
       return { channel: "imessage", ...result };
     },
     sendMedia: async ({ cfg, to, text, mediaUrl, mediaLocalRoots, accountId, deps, replyToId }) => {
-      const result = await (await loadIMessageChannelRuntime()).sendIMessageOutbound({
+      const result = await (
+        await loadIMessageChannelRuntime()
+      ).sendIMessageOutbound({
         cfg,
         to,
         text,
